@@ -32,6 +32,7 @@ def checker():
     acc =  config['LOGIN']
     username = acc['riot_username']
     password = acc['password']
+    region = acc['region']
     headers = OrderedDict({
         "Accept-Language": "en-US,en;q=0.9",
         "Accept": "application/json, text/plain, */*",
@@ -86,13 +87,13 @@ def checker():
     headers2 = {'Authorization': f'Bearer {token}', 'X-Riot-Entitlements-JWT': entitlement, 'Content-Type': 'text/plain'}
         
     json2 = [puuid]
-    with session.get(f'https://pd.eu.a.pvp.net/store/v2/storefront/{puuid}', headers=headers2, json=json2) as r:
+    with session.get(f'https://pd.{region}.a.pvp.net/store/v2/storefront/{puuid}', headers=headers2, json=json2) as r:
         data = r.json()
     weapon_fetch = get(f'https://valorant-api.com/v1/weapons/skinlevels')
     weapon_fetch = weapon_fetch.json()
-    of_data = get(f"https://pd.eu.a.pvp.net/store/v1/offers/", headers=headers2)
+    of_data = get(f"https://pd.{region}.a.pvp.net/store/v1/offers/", headers=headers2)
     offers_data = of_data.json()
-    GetPoints = get(f"https://pd.eu.a.pvp.net/store/v1/wallet/{sub}",headers=headers2)
+    GetPoints = get(f"https://pd.{region}.a.pvp.net/store/v1/wallet/{sub}",headers=headers2)
     ValorantPoints = GetPoints.json()["Balances"]["85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741"]
     Radianite = GetPoints.json()["Balances"]["e59aa87c-4cbf-517a-5983-6e81511be9b7"]
 
