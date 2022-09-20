@@ -18,8 +18,7 @@ Python script useful to check locally your valorant store. It uses the vaorant A
 
 ### 🌊 Visuals
 <img width="1070" alt="Screenshot 2022-09-20 at 18 37 12" src="https://user-images.githubusercontent.com/81587335/191315227-241c5d38-4480-4723-964e-883ccce46176.png">
-
-![GUIValoStoreWatcher](https://user-images.githubusercontent.com/81587335/191369684-1093c7fb-543d-4147-b1f1-472a2f6c794c.png)
+<img width="811" alt="GUIValoStoreWatcher" src="https://user-images.githubusercontent.com/81587335/191372428-c2ce5818-ebde-479e-be8b-7b952d8ffcea.png">
 
 https://user-images.githubusercontent.com/81587335/191369188-0b056792-1445-450a-9859-31d8c6ac3fc1.mp4
 
