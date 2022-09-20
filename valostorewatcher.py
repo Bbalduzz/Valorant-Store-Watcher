@@ -78,6 +78,7 @@ def checker():
     r = session.post('https://auth.riotgames.com/userinfo', headers=headers, json={})
     data = r.json()
     puuid = data['sub']
+    name = data['acct']['game_name']+'#'+data['acct']['tag_line']
     sub = r.text.split('sub":"')[1].split('"')[0]
 
     ## GET SKINS ##
@@ -175,7 +176,7 @@ def checker():
     for i in range(4-len(current_bundles)):
         table_two.add_row()
 
-    table = Table(box=box.HEAVY_EDGE, show_header=True, title=f" ╔══ [bold]{username}'S DAILY STORE[/bold]\n ╠════ Valorant Points: [#2070b2]{ValorantPoints} VP [/#2070b2] \n ╚══════ Radianite Points: [#2070b2] {Radianite} R [/#2070b2]")
+    table = Table(box=box.HEAVY_EDGE, show_header=True, title=f" ╔══ [bold]{name}'S DAILY STORE[/bold]\n ╠════ Valorant Points: [#2070b2]{ValorantPoints} VP [/#2070b2] \n ╚══════ Radianite Points: [#2070b2] {Radianite} R [/#2070b2]")
     table.add_column('DAILY ITEMS', justify='center')
     table.add_column('BUNDLES', justify='center')
     table.add_row(table_one, table_two)
