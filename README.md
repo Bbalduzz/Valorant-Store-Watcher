@@ -1,6 +1,6 @@
 # Valorant Store Watcher  👀 
 
-Python script useful to check locally your valorant store. 
+Python script useful to check locally your valorant store. It uses the vaorant API
 > As for now 2FA auth is not supported :(
 
 ### 🍕 Features:
