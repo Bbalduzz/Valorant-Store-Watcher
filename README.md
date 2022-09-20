@@ -40,3 +40,6 @@ pip install rich
 - Insert your riot credentials and your region (eu/na/...) in `config.ini` where there are the xxx
 - Run `py valostorewatcher.py` or `python3 valostorewatcher.py` to check ur store without the gui
 - Run `py valostorewatcher.py -gui` or `python3 valostorewatcher.py -gui` to check ur store with the gui
+
+### Contriutions
+Everything is welcomed :) If u want to add something feel free to do it and make a pull request ;)
