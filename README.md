@@ -1,6 +1,8 @@
 # Valorant Store Watcher  👀 
 
 Python script useful to check locally your valorant store. 
+> As for now 2FA auth is not supported :(
+
 ### 🍕 Features:
 1) Check **Valorant Points**
 2) Check your **Radianite Points**
@@ -8,6 +10,7 @@ Python script useful to check locally your valorant store.
 4) Check **bundles**
 
 ### ✍🏼 TODO:
+- 2FA auth support
 - multiple account support
 - add alerts to favourite skins
 - cross platform support
