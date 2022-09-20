@@ -32,6 +32,6 @@ pip install configparser
 pip install re
 pip install rich
 ```
-- Insert your riot credentials in `config.ini` where there are the xxx
+- Insert your riot credentials and your region (eu/na/...) in `config.ini` where there are the xxx
 - Run `py valostorewatcher.py` or `python3 valostorewatcher.py`
 - Check your shop
