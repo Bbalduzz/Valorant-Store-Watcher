@@ -78,9 +78,6 @@ def checker():
     r = session.post('https://auth.riotgames.com/userinfo', headers=headers, json={})
     data = r.json()
     puuid = data['sub']
-
-    r = session.post('https://auth.riotgames.com/userinfo', headers=headers, json={})
-    userdata = r.json()
     sub = r.text.split('sub":"')[1].split('"')[0]
 
     ## GET SKINS ##
