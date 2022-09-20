@@ -16,7 +16,9 @@ Python script useful to check locally your valorant store.
 - cross platform support
 
 ### 🌊 Visuals
-<img width="1002" alt="Screenshot 2022-09-20 at 17 55 53" src="https://user-images.githubusercontent.com/81587335/191309480-b2332639-3698-4e3e-bec0-f2c4d0d20a25.png">
+<img width="1070" alt="Screenshot 2022-09-20 at 18 37 12" src="https://user-images.githubusercontent.com/81587335/191315227-241c5d38-4480-4723-964e-883ccce46176.png">
+
+
 
 
 ### 📃 How to use:
