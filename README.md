@@ -27,6 +27,7 @@ https://user-images.githubusercontent.com/81587335/191369188-0b056792-1445-450a-
 
 
 ### 📃 How to use:
+- Install [this](https://www.dafont.com/valorant.font) font
 - Install the dependencies
 ```python
 pip install requests
