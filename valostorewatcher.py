@@ -1,13 +1,16 @@
 ## WATCHER IMPORTS ###
+from distutils.command import check
 from requests import session as sesh, get
 from requests.adapters import HTTPAdapter
 from ssl import PROTOCOL_TLSv1_2
 from urllib3 import PoolManager
 from collections import OrderedDict
 from re import compile
+import os
 import configparser
 config = configparser.ConfigParser()		
-config.read("config.ini")
+parentdir = os.path.dirname(__file__)
+config.read("/".join([parentdir,"config.ini"]))
 from rich.table import Table, box
 from rich.console import Console
 
@@ -19,6 +22,7 @@ import json
 from io import BytesIO
 import urllib.request
 from datetime import date
+from itertools import cycle
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -28,15 +32,19 @@ args = vars(parser.parse_args())
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path("./assets")
 
-def url_image(link, size):
-    with urllib.request.urlopen(link) as u:
-        raw_data = u.read()
-    if size == 'big':
-        pixels_x, pixels_y = 547, 237
-    elif size == 'long':
+def url_image(link, size, skinname):
+    longs = ['vandal', 'phantom', 'operator', 'classic', 'shorty', 'frenzy', 'sheriff', 'ghost', 'stinger', 'spectre', 'bucky', 'judge', 'bulldog', 'marshall', 'ares', 'odin']
+    theweapon = (skinname.split(" ")[-1:][0]).lower()
+    checklong = theweapon in longs
+    if checklong == True: #weapons
         pixels_x, pixels_y = 150, 45
     else:
-        pixels_x, pixels_y = 100, 45
+        if size == 'big': #bundle
+            pixels_x, pixels_y = 547, 237
+        else: #melees
+            pixels_x, pixels_y = 100, 45
+    with urllib.request.urlopen(link) as u:
+        raw_data = u.read()
     image = Image.open(BytesIO(raw_data)).resize((pixels_x, pixels_y))
     return ImageTk.PhotoImage(image)
 
@@ -61,32 +69,13 @@ def price_retriver(skinUuid, offers_data):
             for cost in row["Cost"]:
                 return row["Cost"][cost]
 
-
 def MainGui():
     window = Tk()
     window.geometry("779x417")
     window.configure(bg = "#081527")
-    window.title('ValorantStoreWatcher')
+    window.title('Valorant Store Watcher')
 
-    # bundle_name
-    # bundle_image
-    # bundle_price
-    # skin1_image
-    # skin1_name
-    # skin1_price
-    # skin2_image
-    # skin2_name
-    # skin2_price
-    # skin3_image
-    # skin3_name
-    # skin3_price
-    # skin4_image
-    # skin4_name
-    # skin4_price
-    # valorant_points_amount
-    # radianite_points_amount
-
-    dailyshop = json.load(open('dailyshop.json'))
+    dailyshop = json.load(open("/".join([parentdir,'dailyshop.json'])))
     bundle_name = dailyshop['dailyshop'][0]['Bundle']['bundle_name']
     bundle_image = dailyshop['dailyshop'][0]['Bundle']['bundle_image']
     bundle_price = dailyshop['dailyshop'][0]['Bundle']['bundle_price']
@@ -105,7 +94,8 @@ def MainGui():
     valorant_points_amount = dailyshop['dailyshop'][0]['ValorantPoints_amount']
     radianite_points_amount = dailyshop['dailyshop'][0]['RadianitePoints_amount']
 
-
+    images = [bundle_image]
+    photos = cycle(ImageTk.PhotoImage(image) for image in images)
 
     canvas = Canvas(
         window,
@@ -136,7 +126,7 @@ def MainGui():
         font=("VALORANT", 64 * -1)
     )
 
-    image_image_1 = url_image(bundle_image, 'big')
+    image_image_1 = url_image(bundle_image, 'big', bundle_name)
     image_1 = canvas.create_image(
         295.0,
         146.0,
@@ -195,7 +185,7 @@ def MainGui():
         font=("VALORANT", 12 * -1)
     )
 
-    image_image_4 = url_image(skin1_image, 'melee')
+    image_image_4 = url_image(skin1_image, 'melee', skin1_name)
     image_4 = canvas.create_image(
         663.0,
         73.0,
@@ -322,21 +312,21 @@ def MainGui():
         font=("VALORANT", 12 * -1)
     )
 
-    image_image_10 = url_image(skin2_image, 'mel')
+    image_image_10 = url_image(skin2_image, '', skin2_name)
     image_10 = canvas.create_image(
         668.0,
         209.0,
         image=image_image_10
     )
 
-    image_image_11 = url_image(skin3_image, 'long')
+    image_image_11 = url_image(skin3_image, '', skin3_name)
     image_11 = canvas.create_image(
         670.9556884765625,
         341.7883071899414,
         image=image_image_11
     )
 
-    image_image_12 = url_image(skin4_image, 'mel')
+    image_image_12 = url_image(skin4_image, '', skin4_name)
     image_12 = canvas.create_image(
         476.0,
         341.0,
@@ -351,6 +341,12 @@ def checker():
     username = acc['riot_username']
     password = acc['password']
     region = acc['region']
+    if username == 'xxx':
+        print('Please insert a riot username in config.ini')
+    if password == 'xxx':
+        print('Please insert a password in config.ini')
+    if region == 'xxx':
+        print('Please insert a region in config.ini')
     headers = OrderedDict({
         "Accept-Language": "en-US,en;q=0.9",
         "Accept": "application/json, text/plain, */*",
@@ -411,6 +407,7 @@ def checker():
     weapon_fetch = weapon_fetch.json()
     of_data = get(f"https://pd.{region}.a.pvp.net/store/v1/offers/", headers=headers2)
     offers_data = of_data.json()
+    # with open('offersdata.json', 'a') as f: f.write(json.dumps(offers_data, indent = 4))
     GetPoints = get(f"https://pd.{region}.a.pvp.net/store/v1/wallet/{sub}",headers=headers2)
     ValorantPoints = GetPoints.json()["Balances"]["85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741"]
     Radianite = GetPoints.json()["Balances"]["e59aa87c-4cbf-517a-5983-6e81511be9b7"]
@@ -477,36 +474,35 @@ def checker():
         bundles_images.append(data['data']['displayIcon'])
 
     ## DISPLAY ##
-    table_one = Table(box=box.HORIZONTALS, show_header=True, header_style='bold #2070b2')
-    table_one.add_column('Skin', justify='left')
-    table_one.add_column('Price', justify='center')
-    table_one.add_column('Visual', justify='center')
-    n = 0
-    for i in range(4):
-        table_one.add_row(skin_names[n], str(singleweapons_prices[n]), skin_images[n])
-        n = n+1
+    if not args['gui']:
+        table_one = Table(box=box.HORIZONTALS, show_header=True, header_style='bold #2070b2')
+        table_one.add_column('Skin', justify='left')
+        table_one.add_column('Price', justify='center')
+        table_one.add_column('Visual', justify='center')
+        n = 0
+        for i in range(4):
+            table_one.add_row(skin_names[n], str(singleweapons_prices[n]), skin_images[n])
+            n = n+1
 
-    table_two = Table(box=box.HORIZONTALS, show_header=True, header_style='bold #2070b2')
-    table_two.add_column('Bundle', justify='left')
-    table_two.add_column('Price', justify='center')
-    table_two.add_column('Time Left', justify='center')
-    n = 0
-    for i in range(len(current_bundles)):
-        table_two.add_row(current_bundles[n], str(bundle_prices[n]), str(time))
-        n +=1
-    for i in range(4-len(current_bundles)):
-        table_two.add_row()
+        table_two = Table(box=box.HORIZONTALS, show_header=True, header_style='bold #2070b2')
+        table_two.add_column('Bundle', justify='left')
+        table_two.add_column('Price', justify='center')
+        table_two.add_column('Time Left', justify='center')
+        n = 0
+        for i in range(len(current_bundles)):
+            table_two.add_row(current_bundles[n], str(bundle_prices[n]), str(time))
+            n +=1
+        for i in range(4-len(current_bundles)):
+            table_two.add_row()
 
-    table = Table(box=box.HEAVY_EDGE, show_header=True, title=f" ╔══ [bold]{name}'S DAILY STORE[/bold]\n ╠════ Valorant Points: [#2070b2]{ValorantPoints} VP [/#2070b2] \n ╚══════ Radianite Points: [#2070b2] {Radianite} R [/#2070b2]")
-    table.add_column('DAILY ITEMS', justify='center')
-    table.add_column('BUNDLES', justify='center')
-    table.add_row(table_one, table_two)
-    console = Console()
-    console.print(table)
-
-    # for GUI
-    if args['gui']:
-        def write_json(new_data, filename='dailyshop.json'):
+        table = Table(box=box.HEAVY_EDGE, show_header=True, title=f" ╔══ [bold]{name}'S DAILY STORE[/bold]\n ╠════ Valorant Points: [#2070b2]{ValorantPoints} VP [/#2070b2] \n ╚══════ Radianite Points: [#2070b2] {Radianite} R [/#2070b2]")
+        table.add_column('DAILY ITEMS', justify='center')
+        table.add_column('BUNDLES', justify='center')
+        table.add_row(table_one, table_two)
+        console = Console()
+        console.print(table)
+    else:
+        def write_json(new_data, filename="/".join([parentdir,'dailyshop.json'])):
             with open(filename, 'r+') as file:
                 file_data = json.load(file)
                 file_data['dailyshop'].append(new_data)
