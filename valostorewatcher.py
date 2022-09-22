@@ -1,5 +1,6 @@
 ## WATCHER IMPORTS ###
 from distutils.command import check
+from hashlib import new
 from requests import session as sesh, get
 from requests.adapters import HTTPAdapter
 from ssl import PROTOCOL_TLSv1_2
@@ -23,6 +24,7 @@ from io import BytesIO
 import urllib.request
 from datetime import date
 from itertools import cycle
+from tkVideoPlayer import TkinterVideo
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -76,26 +78,36 @@ def MainGui():
     window.title('Valorant Store Watcher')
 
     dailyshop = json.load(open("/".join([parentdir,'dailyshop.json'])))
-    bundle_name = dailyshop['dailyshop'][0]['Bundle']['bundle_name']
-    bundle_image = dailyshop['dailyshop'][0]['Bundle']['bundle_image']
-    bundle_price = dailyshop['dailyshop'][0]['Bundle']['bundle_price']
-    skin1_image = dailyshop['dailyshop'][0]['Skins']['skin1']['skin1_image']
-    skin1_name = dailyshop['dailyshop'][0]['Skins']['skin1']['skin1_name']
-    skin1_price = dailyshop['dailyshop'][0]['Skins']['skin1']['skin1_price']
-    skin2_image = dailyshop['dailyshop'][0]['Skins']['skin2']['skin2_image']
-    skin2_name = dailyshop['dailyshop'][0]['Skins']['skin2']['skin2_name']
-    skin2_price = dailyshop['dailyshop'][0]['Skins']['skin2']['skin2_price']
-    skin3_image = dailyshop['dailyshop'][0]['Skins']['skin3']['skin3_image']
-    skin3_name = dailyshop['dailyshop'][0]['Skins']['skin3']['skin3_name']
-    skin3_price = dailyshop['dailyshop'][0]['Skins']['skin3']['skin3_price']
-    skin4_image = dailyshop['dailyshop'][0]['Skins']['skin4']['skin4_image']
-    skin4_name = dailyshop['dailyshop'][0]['Skins']['skin4']['skin4_name']
-    skin4_price = dailyshop['dailyshop'][0]['Skins']['skin4']['skin4_price']
-    valorant_points_amount = dailyshop['dailyshop'][0]['ValorantPoints_amount']
-    radianite_points_amount = dailyshop['dailyshop'][0]['RadianitePoints_amount']
+    bundle_name = dailyshop['Bundle']['bundle_name']
+    bundle_image = dailyshop['Bundle']['bundle_image']
+    bundle_price = dailyshop['Bundle']['bundle_price']
+    skin1_image = dailyshop['Skins']['skin1']['skin1_image']
+    skin1_name = dailyshop['Skins']['skin1']['skin1_name']
+    skin1_price = dailyshop['Skins']['skin1']['skin1_price']
+    skin1_video = dailyshop['Skins']['skin1']['skin1_video']
+    skin2_image = dailyshop['Skins']['skin2']['skin2_image']
+    skin2_name = dailyshop['Skins']['skin2']['skin2_name']
+    skin2_price = dailyshop['Skins']['skin2']['skin2_price']
+    skin2_video = dailyshop['Skins']['skin2']['skin2_video']
+    skin3_image = dailyshop['Skins']['skin3']['skin3_image']
+    skin3_name = dailyshop['Skins']['skin3']['skin3_name']
+    skin3_price = dailyshop['Skins']['skin3']['skin3_price']
+    skin3_video = dailyshop['Skins']['skin3']['skin3_video']
+    skin4_image = dailyshop['Skins']['skin4']['skin4_image']
+    skin4_name = dailyshop['Skins']['skin4']['skin4_name']
+    skin4_price = dailyshop['Skins']['skin4']['skin4_price']
+    skin4_video = dailyshop['Skins']['skin4']['skin4_video']
+    valorant_points_amount = dailyshop['ValorantPoints_amount']
+    radianite_points_amount = dailyshop['RadianitePoints_amount']
 
-    images = [bundle_image]
-    photos = cycle(ImageTk.PhotoImage(image) for image in images)
+    def videoPlayer(videolink):
+        videoplayerwindow = Tk()
+        videoplayerwindow.geometry("500x280")
+        videoplayer = TkinterVideo(master=videoplayerwindow, scaled=True)
+        videoplayer.load(rf"{videolink}")
+        videoplayer.pack(expand=True, fill="both")
+        videoplayer.play() # play the video
+        videoplayerwindow.mainloop()
 
     canvas = Canvas(
         window,
@@ -110,7 +122,7 @@ def MainGui():
     canvas.place(x = 0, y = 0)
     canvas.create_text(
         22.0,
-        288.0,
+        280.0,
         anchor="nw",
         text="VALORANT",
         fill="#DC3D4B",
@@ -119,7 +131,7 @@ def MainGui():
 
     canvas.create_text(
         197.0,
-        350.0,
+        342.0,
         anchor="nw",
         text="SHOP",
         fill="#DC3D4B",
@@ -334,6 +346,8 @@ def MainGui():
     )
     window.resizable(False, False)
     window.mainloop()
+    
+    with open("/".join([parentdir,'dailyshop.json']), 'r+') as jsf: jsf.truncate(0)
 
 ## VALOSTORE WATCHER ##
 def checker():
@@ -504,10 +518,8 @@ def checker():
     else:
         def write_json(new_data, filename="/".join([parentdir,'dailyshop.json'])):
             with open(filename, 'r+') as file:
-                file_data = json.load(file)
-                file_data['dailyshop'].append(new_data)
                 file.seek(0)
-                json.dump(file_data, file, indent=4)
+                json.dump(new_data, file, indent=4)
         
         shop = {
             "Bundle":{
@@ -520,26 +532,31 @@ def checker():
                     "skin1_name": skin_names[0],
                     "skin1_image": skin_images[0],
                     "skin1_price": singleweapons_prices[0],
+                    "skin1_video": skin_videos[0],
                 },
                 "skin2":{
                     "skin2_name": skin_names[1],
                     "skin2_image": skin_images[1],
                     "skin2_price": singleweapons_prices[1],
+                    "skin2_video": skin_videos[1],
                 },
                 "skin3":{
                     "skin3_name": skin_names[2],
                     "skin3_image": skin_images[2],
                     "skin3_price": singleweapons_prices[2],
+                    "skin3_video": skin_videos[2],
                 },
                 "skin4":{
                     "skin4_name": skin_names[3],
                     "skin4_image": skin_images[3],
                     "skin4_price": singleweapons_prices[3],
+                    "skin4_video": skin_videos[3],
                 }
             },
             "ValorantPoints_amount": ValorantPoints,
             "RadianitePoints_amount": Radianite,
         }
+
         write_json(shop)
         MainGui()
 
