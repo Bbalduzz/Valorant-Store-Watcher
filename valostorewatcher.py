@@ -33,7 +33,7 @@ OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path("./assets")
 
 def url_image(link, size, skinname):
-    longs = ['vandal', 'phantom', 'operator', 'classic', 'shorty', 'frenzy', 'sheriff', 'ghost', 'stinger', 'spectre', 'bucky', 'judge', 'bulldog', 'marshall', 'ares', 'odin']
+    longs = ['vandal', 'phantom', 'operator', 'shorty', 'frenzy', 'sheriff', 'ghost', 'stinger', 'spectre', 'bucky', 'judge', 'bulldog', 'marshall', 'ares', 'odin']
     theweapon = (skinname.split(" ")[-1:][0]).lower()
     checklong = theweapon in longs
     if checklong == True: #weapons
@@ -418,7 +418,7 @@ def checker():
     bundle_prices = []
     feautured_bundles = data['FeaturedBundle']
     time = convert_time(feautured_bundles['BundleRemainingDurationInSeconds'])
-    if len(feautured_bundles['Bundle']) > 1:
+    if len(feautured_bundles['Bundles']) > 1:
         bundles = [feautured_bundles['Bundles'][0], feautured_bundles['Bundles'][1]]
         for element in bundles: 
             bundle_uuid = element['DataAssetID']
