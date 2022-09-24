@@ -37,7 +37,7 @@ pip install collections
 pip install configparser
 pip install re
 pip install rich
-pip install kVideoPlayer
+pip install tkVideoPlayer
 ```
 - Insert your riot credentials and your region (eu/na/...) in `config.ini` where there are the xxx
 - Run `py valostorewatcher.py` or `python3 valostorewatcher.py` to check ur store without the gui
