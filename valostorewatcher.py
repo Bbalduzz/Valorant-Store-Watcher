@@ -17,7 +17,7 @@ from rich.console import Console
 
 ## GUI IMPORTS ##
 from pathlib import Path
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+from tkinter import Tk, Canvas, Entry, Label, Button, PhotoImage
 from PIL import ImageTk, Image
 import json
 from io import BytesIO
@@ -35,7 +35,7 @@ OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path("./assets")
 
 def url_image(link, size, skinname):
-    longs = ['vandal', 'phantom', 'operator', 'shorty', 'frenzy', 'sheriff', 'ghost', 'stinger', 'spectre', 'bucky', 'judge', 'bulldog', 'marshall', 'ares', 'odin']
+    longs = ['vandal', 'phantom', 'operator', 'shorty', 'frenzy', 'sheriff', 'ghost', 'stinger', 'spectre', 'bucky', 'judge', 'bulldog', 'marshall', 'ares', 'odin', 'guardian']
     theweapon = (skinname.split(" ")[-1:][0]).lower()
     checklong = theweapon in longs
     if checklong == True: #weapons
@@ -109,6 +109,70 @@ def MainGui():
         videoplayer.play() # play the video
         videoplayerwindow.mainloop()
 
+    def NightMarketPage():
+        offer1 = [dailyshop['NightMarket']['skin1']['name'], dailyshop['NightMarket']['skin1']['price'], dailyshop['NightMarket']['skin1']['icon']]
+        offer2 = [dailyshop['NightMarket']['skin2']['name'], dailyshop['NightMarket']['skin2']['price']]
+        offer3 = [dailyshop['NightMarket']['skin3']['name'], dailyshop['NightMarket']['skin3']['price']]
+        offer4 = [dailyshop['NightMarket']['skin4']['name'], dailyshop['NightMarket']['skin4']['price']]
+        offer5 = [dailyshop['NightMarket']['skin5']['name'], dailyshop['NightMarket']['skin5']['price']]
+        offer6 = [dailyshop['NightMarket']['skin6']['name'], dailyshop['NightMarket']['skin6']['price']]
+        nmwind = Tk()
+        nmwind.geometry("779x417")
+        nmwind.configure(bg = "#081527")
+        nmwind.title('Night Market')
+        canvas = Canvas(
+            nmwind,
+            bg = "#081527",
+            height = 417,
+            width = 779,
+            bd = 0,
+            highlightthickness = 0,
+            relief = "ridge"
+        )
+        canvas.create_text(
+            250,
+            10,
+            anchor="nw",
+            text="NIGHT.MARKET",
+            fill="white",
+            font=("Passion One Bold", 48 * -1)
+        )
+        canvas.create_text(
+            320,
+            60,
+            anchor="nw",
+            text=f"ends in TOT hours",
+            fill="white",
+            font=("Passion One Bold", 20 * -1)
+        )
+        canvas.place(x = 0, y = 0)
+        if offer1[0] == 'NONE':
+            canvas.create_text(
+                120,
+                200,
+                anchor="nw",
+                text="NIGHT MARKET NOT AVAILABLE",
+                fill="#DC3D4B",
+                font=("VALORANT", 32 * -1)
+            )
+        else:
+            nm_offer_image_1 = url_image(offer1[2], 'melee', offer1[0])
+            canvas.create_image(
+                295.0,
+                146.0,
+                image=nm_offer_image_1
+            )
+
+
+            print(offer1[0], '|', offer1[1])
+            print(offer2[0], '|', offer2[1])
+            print(offer3[0], '|', offer3[1])
+            print(offer4[0], '|', offer4[1])
+            print(offer5[0], '|', offer5[1])
+            print(offer6[0], '|', offer6[1])
+        nmwind.resizable(False, False)
+        nmwind.mainloop()
+
     canvas = Canvas(
         window,
         bg = "#081527",
@@ -120,6 +184,7 @@ def MainGui():
     )
 
     canvas.place(x = 0, y = 0)
+
     canvas.create_text(
         22.0,
         280.0,
@@ -136,6 +201,19 @@ def MainGui():
         text="SHOP",
         fill="#DC3D4B",
         font=("VALORANT", 64 * -1)
+    )
+
+    image_image_0 = ImageTk.PhotoImage(Image.open(relative_to_assets("nmbutton.png")).resize((23,30)))
+    button_1 = Button(
+        image=image_image_0,
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda: NightMarketPage(),
+        relief="flat"
+    )
+    button_1.place(
+        x=155.0,
+        y=362.0,
     )
 
     image_image_1 = url_image(bundle_image, 'big', bundle_name)
@@ -344,9 +422,14 @@ def MainGui():
         341.0,
         image=image_image_12
     )
+
+    # photo=ImageTk.PhotoImage(Image.open('/Users/edoardo/Documents/projects/Valorant-Store-Watcher/bgvalorant.png').resize((779,450)))
+    # l=Label(window,image=photo)
+    # l.grid()
+
     window.resizable(False, False)
     window.mainloop()
-    
+
     with open("/".join([parentdir,'dailyshop.json']), 'r+') as jsf: jsf.truncate(0)
 
 ## VALOSTORE WATCHER ##
@@ -366,8 +449,8 @@ def checker():
         "Accept": "application/json, text/plain, */*",
         'User-Agent': 'RiotClient/58.0.0.4640299.4552318 rso-auth (Windows;10;;Professional, x64)'
     })
-    session = sesh()
-    session.headers = headers
+    session = sesh() 
+    session.headers = headers #type:ignore
     session.mount('https://', TLSAdapter())
     data = {
         "client_id": "play-valorant-web-prod",
@@ -384,20 +467,33 @@ def checker():
     data = {
         'type': 'auth',
         'username': username,
-        'password': password
+        'password': password,
     }
-    r2 = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers)
-    data = r2.json()
-    if "access_token" in r2.text:
-        pattern = compile(
-            'access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)')
+    r = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers)
+    data = r.json()
+    if "access_token" in r.text:
+        pattern = compile('access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)')
         data = pattern.findall(data['response']['parameters']['uri'])[0]
         token = data[0]
-
-    elif "auth_failure" in r2.text:
+    elif "auth_failure" in r.text:
         print("banned")
     else:
-        print("Failed. Probably u have 2FA activated")
+        ver_code = input('[b][green]2FA Auth Enabled[/b]. Enter the verification code: \n')
+        authdata = {
+            'type': 'multifactor',
+            'code': ver_code,
+        }
+        r = session.put('https://auth.riotgames.com/api/v1/authorization', json=authdata, headers=headers)
+        data = r.json()
+        if "access_token" in r.text:
+            pattern = compile('access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)')
+            data = pattern.findall(data['response']['parameters']['uri'])[0]
+            token = data[0]
+        elif "auth_failure" in r.text:
+            print("Banned")
+        else:
+            print('Failed')
+        
     headers = {
         'User-Agent': 'RiotClient/58.0.0.4640299.4552318 rso-auth (Windows;10;;Professional, x64)',
         'Authorization': f'Bearer {token}',
@@ -427,7 +523,6 @@ def checker():
     Radianite = GetPoints.json()["Balances"]["e59aa87c-4cbf-517a-5983-6e81511be9b7"]
 
     ## bundles ##
-
     bundles_uuid = [] ## list of current bundles
     bundle_prices = []
     feautured_bundles = data['FeaturedBundle']
@@ -443,8 +538,7 @@ def checker():
                 bundle_item_price = element['Items'][n]['DiscountedPrice']
                 all_prices.append(bundle_item_price)
                 n = n+1
-            bundle_prices.append(sum(all_prices)) # price of the bundle
-                
+            bundle_prices.append(sum(all_prices)) # price of the bundles
     else:
         bundles = [feautured_bundles['Bundle']]
         for element in bundles: 
@@ -456,7 +550,29 @@ def checker():
                         bundle_item_price = element['Items'][n]['DiscountedPrice']
                         all_prices.append(bundle_item_price)
                         n = n+1
-                    bundle_prices.append(sum(all_prices)) # price of the bundle
+                    bundle_prices.append(sum(all_prices)) # price of the single bundle
+    
+    ## night market ##
+    nm_price = []
+    nm_offers = []
+    nm_images = []
+    nm_skins_id = []
+    try:
+        for i in data['BonusStore']['BonusStoreOffers']:
+            [nm_price.append(k) for k in i['DiscountCosts'].values()] # night market prices
+        for i in data['BonusStore']['BonusStoreOffers']:
+            [nm_skins_id.append(k['ItemID']) for k in i['Offer']['Rewards']] # night market offers
+    except KeyError:
+        for i in range(6):
+            nm_skins_id.append('NONE')
+        for i in range(6):
+            nm_price.append('NONE')
+
+    for nmskinid in nm_skins_id:
+        with session.get(f'https://valorant-api.com/v1/weapons/skinlevels/{nmskinid}', headers=headers) as r:
+            nmdata = r.json()
+        nm_offers.append(nmdata['data']['displayName']) # names of daily items
+        nm_images.append(nmdata['data']['displayIcon']) # images of of daily items
 
      ## daily shop ##
     singleweapons_prices = []
@@ -478,17 +594,18 @@ def checker():
         skin_images.append(data['data']['displayIcon']) # images of of daily items
         skin_videos.append(data['data']['streamedVideo']) # videos of daily items
 
-    ## bundles part 2 ##
     bundles_images = []
     current_bundles = []
     for bundle in bundles_uuid:
         with session.get(f'https://valorant-api.com/v1/bundles/{bundle}', headers=headers) as r:
             data = r.json()
-        current_bundles.append(data['data']['displayName'])
-        bundles_images.append(data['data']['displayIcon'])
+        current_bundles.append(data['data']['displayName']) # current bundle
+        bundles_images.append(data['data']['displayIcon']) # bundle image
+
 
     ## DISPLAY ##
     if not args['gui']:
+        console = Console()
         table_one = Table(box=box.HORIZONTALS, show_header=True, header_style='bold #2070b2')
         table_one.add_column('Skin', justify='left')
         table_one.add_column('Price', justify='center')
@@ -509,12 +626,24 @@ def checker():
         for i in range(4-len(current_bundles)):
             table_two.add_row()
 
+        table_three = Table(box=box.HORIZONTALS, show_header=True, header_style='bold #2070b2')
+        table_three.add_column('Offers', justify='left')
+        table_three.add_column('Price', justify='center')
+        table_three.add_column('Visual', justify='center')
+        n = 0
+        for i in range(6):
+            table_three.add_row(nm_offers[n], str(nm_price[n]), nm_images[n])
+            n = n+1
+
+        night_market_table = Table(box=box.HEAVY_EDGE, title='[bold]NIGHT MARKET[/bold]', show_header=True, header_style='bold #2070b2')
+        night_market_table.add_row(table_three)
+
         table = Table(box=box.HEAVY_EDGE, show_header=True, title=f" ╔══ [bold]{name}'S DAILY STORE[/bold]\n ╠════ Valorant Points: [#2070b2]{ValorantPoints} VP [/#2070b2] \n ╚══════ Radianite Points: [#2070b2] {Radianite} R [/#2070b2]")
         table.add_column('DAILY ITEMS', justify='center')
         table.add_column('BUNDLES', justify='center')
         table.add_row(table_one, table_two)
-        console = Console()
         console.print(table)
+        console.print(night_market_table)
     else:
         def write_json(new_data, filename="/".join([parentdir,'dailyshop.json'])):
             with open(filename, 'r+') as file:
@@ -552,6 +681,38 @@ def checker():
                     "skin4_price": singleweapons_prices[3],
                     "skin4_video": skin_videos[3],
                 }
+            },
+            "NightMarket":{
+                "skin1":{
+                    "name": nm_offers[0],
+                    "price": nm_price[0],
+                    "icon": nm_images[0]
+                },
+                "skin2":{
+                    "name": nm_offers[1],
+                    "price": nm_price[1],
+                    "icon": nm_images[1]
+                },
+                "skin3":{
+                    "name": nm_offers[2],
+                    "price": nm_price[2],
+                    "icon": nm_images[2]
+                },
+                "skin4":{
+                    "name": nm_offers[3],
+                    "price": nm_price[3],
+                    "icon": nm_images[3]
+                },
+                "skin5":{
+                    "name": nm_offers[4],
+                    "price": nm_price[4],
+                    "icon": nm_images[4]
+                },
+                "skin6":{
+                    "name": nm_offers[5],
+                    "price": nm_price[5],
+                    "icon": nm_images[5]
+                },              
             },
             "ValorantPoints_amount": ValorantPoints,
             "RadianitePoints_amount": Radianite,
