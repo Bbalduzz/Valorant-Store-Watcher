@@ -156,14 +156,7 @@ def MainGui():
                 font=("VALORANT", 32 * -1)
             )
         else:
-            nm_offer_image_1 = url_image(offer1[2], 'melee', offer1[0])
-            canvas.create_image(
-                295.0,
-                146.0,
-                image=nm_offer_image_1
-            )
-
-
+            # page work in progess
             print(offer1[0], '|', offer1[1])
             print(offer2[0], '|', offer2[1])
             print(offer3[0], '|', offer3[1])
