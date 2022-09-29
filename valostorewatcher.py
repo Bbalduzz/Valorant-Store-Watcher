@@ -471,7 +471,7 @@ def checker():
     elif "auth_failure" in r.text:
         print("banned")
     else:
-        ver_code = input('[b][green]2FA Auth Enabled[/b]. Enter the verification code: \n')
+        ver_code = input('2FA Auth Enabled. Enter the verification code: \n')
         authdata = {
             'type': 'multifactor',
             'code': ver_code,
